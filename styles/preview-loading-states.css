@@ -1,0 +1,41 @@
+/* ------------
+  3D Preview Control Loading States
+------------ */
+
+/* CHANGE default loading image (36x36px) */
+.custom-preview-loading-image .dw-previewProgressImage {
+  box-sizing: border-box;
+  background: url("../images/gear.gif");
+  width: 80px;
+  height: 80px;
+  margin: 0 auto; /* Center loading state */
+}
+.custom-preview-loading-image .dw-previewProgressImage img {
+  display: none; /* Disable default image */
+}
+
+/* CUSTOM CSS loading state */
+.css-preview-loading .dw-previewProgressImage {
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  font-size: 3em; /* Size of loader is controlled by font size */
+  padding: 0;
+  margin: 0 auto; /* Center loading state */
+  border: .2em solid rgba(0,0,0,.2);
+  border-top: .2em solid #222;
+  border-radius: 50%;
+  animation: preview-loading-spin 1s linear infinite;
+}
+.css-preview-loading .dw-previewProgressImage img {
+  display: none; /* Disable default image */
+}
+
+@keyframes preview-loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

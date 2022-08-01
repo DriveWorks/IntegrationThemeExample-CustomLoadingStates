@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Loading States | DriveWorks</title>
+
+    <!-- Force loading states (for debugging) -->
+    <link rel="stylesheet" href="styles/force-loading-states.css" />
+
+    <!-- Custom loading state styles -->
+    <link rel="stylesheet" href="styles/inline-loading-states.css" />
+    <link rel="stylesheet" href="styles/form-loading-states.css" />
+    <link rel="stylesheet" href="styles/preview-loading-states.css" />
+
+    <!-- Use to structure the example ONLY -->
+    <link rel="stylesheet" href="_structure.css" />
+</head>
+
+<body>
+
+    <h1>Custom Loading States</h1>
+
+    <label>
+        <input type="checkbox" id="force-loading-toggle" checked />
+        Force Loading States
+    </label>
+
+    <h2>Specification Form Loading</h3>
+    <p class="tip">
+        💡 <strong>Tip:</strong>
+        To force display the Form loading state during development, use:
+        <code>.dw-loadingOverlay { display: block !important; }</code>
+    </p>
+
+    <div class="group">
+
+        <!-- Inline Loading Message -->
+        <div class="example">
+            <div class="form delay">
+                <div class="inline-loading-state">Configurator loading...</div>
+            </div>
+            <p><strong>Inline</strong> loading message <span class="tag">Shown before Form renders</span></p>
+        </div>
+
+        <!-- Inline Loading State -->
+        <div class="example">
+            <div class="form is-loading delay"></div>
+            <p><strong>Inline</strong> loading CSS class <span class="tag">Shown before Form renders</span></p>
+        </div>
+
+        <!-- Default Form Loading State -->
+        <div class="example">
+            <div class="form force-form-loading"></div>
+            <p><strong>Default</strong> loading image <span class="tag forced">Loading state forced</span></p>
+        </div>
+
+        <!-- Change Form Loading Image -->
+        <div class="example">
+            <div class="form change-form-loading-image force-form-loading"></div>
+            <p><strong>Change</strong> loading image <span class="tag forced">Loading state forced</span></p>
+        </div>
+
+        <!-- Custom Form Loading Image - Hide Text -->
+        <div class="example">
+            <div class="form custom-form-loading-image hide-loading-text force-form-loading"></div>
+            <p><strong>Custom</strong> size image, no text <span class="tag forced">Loading state forced</span></p>
+        </div>
+
+        <!-- Pure CSS Form Loading State (no images) -->
+        <div class="example">
+            <div class="form css-form-loading hide-loading-text force-form-loading"></div>
+            <p><strong>Simple CSS</strong> loading state <span class="tag forced">Loading state forced</span></p>
+        </div>
+
+    </div>
+
+    <h2>3D Preview Loading</h3>
+    <p class="tip">
+        💡 <strong>Tip:</strong>
+        To force display the Preview Control loading state during development, use:
+        <code>.dw-previewLoadingProgress { display: block !important; }</code>
+    </p>
+
+    <div class="group">
+
+        <!-- Default Preview Loading State -->
+        <div class="example">
+            <div class="form force-preview-loading"></div>
+            <p>
+                <strong>Default</strong> loading image
+                <span class="tag forced">Loading state forced</span>
+            </p>
+        </div>
+
+        <div class="example">
+            <div class="form custom-preview-loading-image force-preview-loading"></div>
+            <p>
+                <strong>Custom</strong> loading image
+                <span class="tag forced">Loading state forced</span>
+            </p>
+        </div>
+
+        <div class="example">
+            <div class="form css-preview-loading force-preview-loading"></div>
+            <p>
+                <strong>Simple CSS</strong> loading state
+                <span class="tag forced">Loading state forced</span>
+            </p>
+        </div>
+
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        const GROUP_ALIAS = config.groupAlias;
+        const PROJECT_NAME = config.projectName;
+        const ARTIFICIAL_LOADING_DELAY_SECONDS = 1;
+        const forms = document.querySelectorAll(".form");
+
+        // Run on client load
+        async function dwClientLoaded() {
+            try {
+
+                // Create DriveWorks API client
+                const DW_CLIENT = new window.DriveWorksLiveClient(config.serverUrl);
+
+                // Login to Group
+                await DW_CLIENT.loginGroup(GROUP_ALIAS);
+
+                // Render Forms
+                Promise.all([...forms].map(async (form) => {
+                    let delay = 0;
+                    if (form.classList.contains("delay")) {
+                        delay = ARTIFICIAL_LOADING_DELAY_SECONDS;
+                    }
+
+                    // Create Specification
+                    const specification = await DW_CLIENT.createSpecification(GROUP_ALIAS, PROJECT_NAME);
+
+                    // [Debug] Artificially delay initial render to display inline loading state
+                    setTimeout(async () => {
+
+                        // (Optional) Clear inline container content BEFORE render - see "Inline Loading Message" example
+                        form.innerHTML = "";
+
+                        // Render Specification Form
+                        await specification.render(form);
+
+                        // (Optional) Remove loading class on container AFTER render - see "Inline Loading State" example
+                        form.classList.remove("is-loading");
+
+                    }, delay * 1000);
+
+                    return form;
+                }));
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        // [DEBUG] Toggle forced loading states
+        const forceToggle = document.querySelector("#force-loading-toggle");
+        const forcedForms = document.querySelectorAll(".form.force-form-loading");
+        const forcedPreviews = document.querySelectorAll(".form.force-preview-loading");
+        const forcedTags = document.querySelectorAll(".tag.forced");
+        forceToggle.addEventListener("change", () => {
+            for (const form of forcedForms) {
+                form.classList.toggle("force-form-loading");
+            }
+            for (const form of forcedPreviews) {
+                form.classList.toggle("force-preview-loading");
+            }
+            for (const tag of forcedTags) {
+                tag.classList.toggle("hidden");
+            }
+        });
+    </script>
+
+    <!-- Option A) Directly load Client Library -->
+    <!-- <script src="https://YOUR-THEME-SERVER.COM/DriveworksLiveIntegrationClient.min.js" onload="dwClientLoaded()"></script> -->
+
+    <!-- Option B) Inject Client Library dynamically from server url in config file -->
+    <script>
+        (function(doc, script) {
+            script = doc.createElement("script");
+            script.src = config.serverUrl + "/DriveWorksLiveIntegrationClient.min.js";
+            script.onload = () => dwClientLoaded(); // Custom local function run when client has loaded
+            doc.body.appendChild(script);
+        }(document));
+    </script>
+
+</body>
+</html>

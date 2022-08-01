@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom HTML Loading Element | DriveWorks</title>
+
+    <!-- Use to structure the example ONLY -->
+    <link rel="stylesheet" href="_structure.css" />
+
+    <style>
+        .form {
+            width: 40%;
+            height: 350px;
+            margin: 0 1em 0 0;
+        }
+
+        .custom-loading-element {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.75);
+            color: #fff;
+        }
+        .custom-loading-element .inner {
+            display: grid;
+            height: 100%;
+            place-content: center;
+            padding: 1em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Overview -->
+    <h1>Custom Loading Element</h1>
+
+    <p>This example demonstrates how to display a <strong>custom HTML element</strong> when a Form rendered by a DriveWorks Live Client is loading.</p>
+    <p>
+        This custom element is shown when <strong class="upper">any</strong> Specification Form rendered by a single Client is loading <strong class="upper">after</strong> the initial render.<br/>
+        For example: both Forms below will trigger the same custom loading state when the "Run Long Task" Macro button inside either Form is pressed.
+    </p>
+
+    <h4>Sample Code:</h4>
+<pre><code>new window.DriveWorksLiveClient(SERVER_URL, {
+    formLoadingOverlay: document.querySelector(".custom-loading-element")
+});</code></pre>
+
+    <p>For additional information, see the Client documentation for <a href="https://webapi.driveworkslive.com/help/client/interfaces/driveworksliveclientconfig.html#formloadingoverlay" target="_blank">DriveWorksLiveClientConfig</a>.
+
+    <h4>Example:</h4>
+
+    <!-- Example -->
+    <div class="group">
+        <div class="form form-a">Loading...</div>
+        <div class="form form-b">Loading...</div>
+    </div>
+
+    <div class="custom-loading-element" style="display: none;">
+        <div class="inner">
+            A Form on this Client is loading...
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        const GROUP_ALIAS = config.groupAlias;
+        const PROJECT_NAME = config.projectNameCustomLoadingElement;
+        const forms = document.querySelectorAll(".form");
+
+        // Run on client load
+        async function dwClientLoaded() {
+            try {
+
+                // Create DriveWorks API client
+                const DW_CLIENT = new window.DriveWorksLiveClient(config.serverUrl, {
+                    formLoadingOverlay: document.querySelector(".custom-loading-element"), // Set custom loading element (applied to all Forms)
+                });
+
+                // Login to Group
+                await DW_CLIENT.loginGroup(GROUP_ALIAS);
+
+                // Render Forms
+                Promise.all([...forms].map(async (form) => {
+
+                    // Create Specification
+                    const specification = await DW_CLIENT.createSpecification(GROUP_ALIAS, PROJECT_NAME);
+
+                    // (Optional) Clear inline container content BEFORE render - see "Inline Loading Message" example
+                    form.innerHTML = "";
+
+                    // Render Specification Form
+                    await specification.render(form);
+                }));
+
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    </script>
+
+    <!-- Option A) Directly load Client Library -->
+    <!-- <script src="https://YOUR-THEME-SERVER.COM/DriveworksLiveIntegrationClient.min.js" onload="dwClientLoaded()"></script> -->
+
+    <!-- Option B) Inject Client Library dynamically from server url in config file -->
+    <script>
+        (function(doc, script) {
+            script = doc.createElement("script");
+            script.src = config.serverUrl + "/DriveWorksLiveIntegrationClient.min.js";
+            script.onload = () => dwClientLoaded(); // Custom local function run when client has loaded
+            doc.body.appendChild(script);
+        }(document));
+    </script>
+
+</body>
+</html>
