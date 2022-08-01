@@ -1,0 +1,41 @@
+/* ------------
+  Inline Loading States - shown before Form is rendered
+------------ */
+
+/* Inline loading state */
+.inline-loading-state {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+}
+
+/* Loading class (no additional markup) */
+.form.is-loading {
+  position: relative;
+}
+.form.is-loading::after {
+  box-sizing: border-box;
+  content: '';
+  position: absolute;
+  display: block;
+  font-size: 4em;
+  width: 1em;
+  height: 1em;
+  top: 50%;
+  left: 50%;
+  margin: -0.5em 0 0 -0.5em;
+  border: .2em solid #ddd;
+  border-top: .2em solid #4299e1;
+  border-radius: 50%;
+  animation: inline-loading-spin 1s linear infinite;
+}
+
+@keyframes inline-loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

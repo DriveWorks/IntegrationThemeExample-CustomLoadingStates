@@ -1,0 +1,47 @@
+/* ------------
+  Specification Form Loading States
+------------ */
+
+/* HIDE loading text */
+.hide-loading-text .dw-loadingOverlay .dw-loadingOverlayText {
+  display: none;
+}
+
+/* CHANGE default loading image (36x36px) */
+.change-form-loading-image .dw-loadingOverlay .dw-loadingOverlayProgress {
+  background-image: url("../images/ripple.gif");
+  margin-bottom: .5em; /* Optional - increase space between text */
+}
+
+/* CUSTOM loading image */
+.custom-form-loading-image .dw-loadingOverlay .dw-loadingOverlayProgress {
+  background-image: url("../images/blocks.gif");
+  width: 100px;
+  height: 100px;
+  padding: 0;
+  margin: 0 auto; /* Center loading state */
+}
+
+/* CUSTOM CSS loading state (no images) */
+.css-form-loading .dw-loadingOverlay .dw-loadingOverlayProgress {
+  box-sizing: border-box;
+  background-image: none;
+  width: 1em;
+  height: 1em;
+  font-size: 3em; /* Size of loader is controlled by font size */
+  padding: 0;
+  margin: 0 auto; /* Center loading state */
+  border: .2em solid rgba(0,0,0,.2);
+  border-top: .2em solid #222;
+  border-radius: 50%;
+  animation: loading-spin 1s linear infinite;
+}
+
+@keyframes loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

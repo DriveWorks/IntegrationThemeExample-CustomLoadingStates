@@ -1,0 +1,13 @@
+/* ------------
+  Force loading states (for debugging)
+------------ */
+
+/* Force Form loading state */
+.force-form-loading .dw-loadingOverlay {
+  display: block !important;
+}
+
+/* Force 3D Preview Control loading state */
+.force-preview-loading .dw-previewLoadingProgress {
+  display: block !important;
+}
