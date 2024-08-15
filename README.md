@@ -1,6 +1,6 @@
 # DriveWorks Live - Integration Theme Example - Custom Loading States
 ### Version: 1.0.0
-#### DriveWorks Versions: 18.0 - 20.3
+#### DriveWorks Versions: 17.x - 20.x
 
 A distributable example that demonstrates how to customize various loading states shown in DriveWorks Forms using CSS.
 
